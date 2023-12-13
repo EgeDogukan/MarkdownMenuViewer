@@ -1,0 +1,6 @@
+@MarkdownMenuViewer.Server_HostAddress = http://localhost:5261
+
+GET {{MarkdownMenuViewer.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
