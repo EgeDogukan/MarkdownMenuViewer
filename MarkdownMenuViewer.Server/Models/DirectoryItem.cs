@@ -1,0 +1,10 @@
+﻿namespace MarkdownMenuViewer.Server.Models
+{
+    public class DirectoryItem
+    {
+        public string Name { get; set; }
+        public string Path { get; set; }
+        public string IsDirectory { get; set; }
+        public List<DirectoryItem> Children { get; set; }
+    }
+}
