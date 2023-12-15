@@ -15,7 +15,7 @@ namespace MarkdownMenuViewer.Server.Services
             //check whether the path is empty
             if(path == null)
             {
-                throw new ArgumentNullException(path);
+                throw new ArgumentNullException(path, "path is null");
             }
 
             var directoryInfo = new DirectoryInfo(path); //directoryinfo class has the abilites to get parent, enumerate content etc.
@@ -50,11 +50,28 @@ namespace MarkdownMenuViewer.Server.Services
         public async Task<MarkdownFile> GetMarkdownFileAsync(string path)
         {
 
+            if(File.Exists(path) == false)
+            {
+                throw new FileNotFoundException("The file at " + path + "does not exist.");
+            }
 
-            var MarkdownFile = new MarkdownFile();
+            if(path == null)
+            {
+                throw new ArgumentNullException(path, "path is null");
+            } 
 
-            return await Task.FromResult(MarkdownFile);
+            var content = await File.ReadAllTextAsync(path);
+
+            var markdownFile = new MarkdownFile
+            {
+                Name = Path.GetFileName(path),
+                Path = path,
+                Content = content
+            };
+            
+            //var markdownFile = new MarkdownFile();
+
+            return await Task.FromResult(markdownFile);
         }
-
     }
 }
