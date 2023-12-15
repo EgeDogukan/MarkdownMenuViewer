@@ -73,5 +73,56 @@ namespace MarkdownMenuViewer.Server.Services
 
             return await Task.FromResult(markdownFile);
         }
+
+        public async Task<FileSystemObject> GetFileSystemObjectAsync(string path)
+        {
+            if (string.IsNullOrEmpty(path) == true)
+            {
+                throw new ArgumentNullException(path, "path is null");
+            }
+
+            if(File.Exists(path) == true)
+            {
+                var content = await File.ReadAllTextAsync(path);
+                return new FileSystemObject
+                {
+                    IsFile = true,
+                    File = new MarkdownFile
+                    {
+                        Name = Path.GetFileName(path),
+                        Path = path,
+                        Content = content
+                    }
+                };
+            }
+            else if (Directory.Exists(path))
+            {
+
+                var directoryInfo = new DirectoryInfo(path); //directoryinfo class has the abilites to get parent, enumerate content etc.
+                var fileSystemInfos = directoryInfo.EnumerateFileSystemInfos();
+
+                foreach (var info in fileSystemInfos)
+                {
+                    return new FileSystemObject
+                    {
+                        IsFile = false,
+                        Directory = new DirectoryItem
+                        {
+                            Name = info.Name,
+                            Path = info.FullName,
+                            IsDirectory = (info.Attributes & FileAttributes.Directory) == FileAttributes.Directory,
+                            ParentDir = directoryInfo.Parent?.FullName,
+                            Children = new List<DirectoryItem>()  //initialize to null by default
+                        }
+                    };
+                }
+            }
+            else
+            {
+                throw new ArgumentException(path, "Can't locate the object");
+                return null;
+            }
+            return null;
+        }
     }
 }
