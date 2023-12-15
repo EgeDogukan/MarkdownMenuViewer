@@ -6,5 +6,6 @@ namespace MarkdownMenuViewer.Server.Services
     {
         Task<IEnumerable<DirectoryItem>> GetDirectoryContentsAsync(string path);
         Task<MarkdownFile> GetMarkdownFileAsync(string path);
+        Task<FileSystemObject> GetFileSystemObjectAsync(string path);
     }
 }
