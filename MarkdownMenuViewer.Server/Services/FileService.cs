@@ -9,7 +9,7 @@ namespace MarkdownMenuViewer.Server.Services
             //check whether the directory in path variable exists
             if(Directory.Exists(path) == false)
             {
-                throw new DirectoryNotFoundException("The directory at " + path + "does not exist.");
+                throw new DirectoryNotFoundException("The directory at " + path + " does not exist.");
             }
 
             //check whether the path is empty
@@ -52,7 +52,7 @@ namespace MarkdownMenuViewer.Server.Services
 
             if(File.Exists(path) == false)
             {
-                throw new FileNotFoundException("The file at " + path + "does not exist.");
+                throw new FileNotFoundException("The file at " + path + " does not exist.");
             }
 
             if(path == null)
