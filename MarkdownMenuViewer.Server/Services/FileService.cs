@@ -18,10 +18,33 @@ namespace MarkdownMenuViewer.Server.Services
                 throw new ArgumentNullException(path);
             }
 
+            var directoryInfo = new DirectoryInfo(path); //directoryinfo class has the abilites to get parent, enumerate content etc.
+            var fileSystemInfos = directoryInfo.EnumerateFileSystemInfos();
+            //var DirectoryItems = new List<DirectoryItem>();
+            var directoryItems = fileSystemInfos.Select(info =>
+            {
+                var directoryItem = new DirectoryItem
+                {
+                    Name = info.Name,
+                    Path = info.FullName,
+                    IsDirectory = (info.Attributes & FileAttributes.Directory) == FileAttributes.Directory,
+                    ParentDir = null,
+                    Children = null //initialize to null by default
+                };
 
-            var DirectoryItems = new List<DirectoryItem>();
+                if (info is DirectoryInfo)      //checking if the info is either a directory or a file
+                {
+                    directoryItem.Children = new List<DirectoryItem>();
+                }
 
-            return await Task.FromResult(DirectoryItems);
+                if(directoryInfo.Parent != null && directoryInfo.Parent.Exists == true)   //checking whether the parent exists and if parent is null it means it is root
+                {
+                    directoryItem.ParentDir = directoryInfo.Parent.FullName;
+                }
+
+                return directoryItem;
+            });
+            return await Task.FromResult(directoryItems);
         }
 
         public async Task<MarkdownFile> GetMarkdownFileAsync(string path)
