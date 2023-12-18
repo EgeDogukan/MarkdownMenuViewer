@@ -9,11 +9,11 @@ namespace MarkdownMenuViewer.Server.Controllers
     public class FileSystemController : ControllerBase
     {
 
-        private readonly IFileService fileService;
+        private readonly IFileService _fileService;
 
         public FileSystemController(IFileService fileService)
         {
-            this.fileService = fileService;
+            this._fileService = fileService;
         }
 
         [HttpGet("directory")]
@@ -21,7 +21,7 @@ namespace MarkdownMenuViewer.Server.Controllers
         {
             try
             {
-                var contents = await fileService.GetDirectoryContentsAsync(path);
+                var contents = await _fileService.GetDirectoryContentsAsync(path);
                 return Ok(contents);
             }
             catch (DirectoryNotFoundException ex)
@@ -35,12 +35,34 @@ namespace MarkdownMenuViewer.Server.Controllers
         {
             try
             {
-                var file = await fileService.GetMarkdownFileAsync(path);
+                var file = await _fileService.GetMarkdownFileAsync(path);
                 return Ok(file);
             }
             catch (FileNotFoundException ex)
             {
                 return NotFound(ex.Message);
+            }
+        }
+
+        [HttpGet("")]
+        public async Task<IActionResult> GetFileSystemObject(string path)
+        {
+            try
+            {
+                var fileSystemObjects = await _fileService.GetFileSystemObjectAsync(path);
+                return Ok(fileSystemObjects);
+            }
+            catch (FileNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (DirectoryNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while processing your request.");
             }
         }
     }

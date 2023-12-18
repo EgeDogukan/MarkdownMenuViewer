@@ -25,7 +25,6 @@ namespace MarkdownMenuViewer.Server.Services
             {
                 var directoryItem = new DirectoryItem
                 {
-                    Type = "directory",
                     Name = info.Name,
                     Path = info.FullName,
                     ParentDir = null,
@@ -58,7 +57,6 @@ namespace MarkdownMenuViewer.Server.Services
 
             var markdownFile = new MarkdownFile
             {
-                Type = "file",
                 Name = Path.GetFileName(path),
                 Path = path,
                 Content = content
@@ -90,7 +88,7 @@ namespace MarkdownMenuViewer.Server.Services
                     {
                         Name = info.Name,
                         Path = info.FullName,
-                        Content = (fileType == ".txt" || fileType == ".md") ? await File.ReadAllTextAsync(info.FullName) : null
+                        Content = (fileType == ".txt" || fileType == ".md") ? await File.ReadAllTextAsync(info.FullName) : "not supported file type:" + fileType
                     } : null,
                     Directory = isDirectory ? new DirectoryItem
                     {
