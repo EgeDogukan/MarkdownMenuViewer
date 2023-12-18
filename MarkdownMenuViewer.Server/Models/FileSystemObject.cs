@@ -2,7 +2,7 @@
 {
     public class FileSystemObject
     {
-        public bool IsFile { get; set; }
+        public string Type { get; set; }
         public DirectoryItem Directory { get; set; }
         public MarkdownFile File { get; set; }
     }
