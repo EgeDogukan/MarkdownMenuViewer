@@ -1,4 +1,5 @@
 ﻿using MarkdownMenuViewer.Server.Models;
+using System.IO;
 
 namespace MarkdownMenuViewer.Server.Services
 {
@@ -20,22 +21,15 @@ namespace MarkdownMenuViewer.Server.Services
 
             var directoryInfo = new DirectoryInfo(path); //directoryinfo class has the abilites to get parent, enumerate content etc.
             var fileSystemInfos = directoryInfo.EnumerateFileSystemInfos();
-            //var DirectoryItems = new List<DirectoryItem>();
             var directoryItems = fileSystemInfos.Select(info =>
             {
                 var directoryItem = new DirectoryItem
                 {
+                    Type = "directory",
                     Name = info.Name,
                     Path = info.FullName,
-                    IsDirectory = (info.Attributes & FileAttributes.Directory) == FileAttributes.Directory,
                     ParentDir = null,
-                    Children = null //initialize to null by default
                 };
-
-                if (info is DirectoryInfo)      //checking if the info is either a directory or a file
-                {
-                    directoryItem.Children = new List<DirectoryItem>();
-                }
 
                 if(directoryInfo.Parent != null && directoryInfo.Parent.Exists == true)   //checking whether the parent exists and if parent is null it means it is root
                 {
@@ -64,13 +58,12 @@ namespace MarkdownMenuViewer.Server.Services
 
             var markdownFile = new MarkdownFile
             {
+                Type = "file",
                 Name = Path.GetFileName(path),
                 Path = path,
                 Content = content
             };
             
-            //var markdownFile = new MarkdownFile();
-
             return await Task.FromResult(markdownFile);
         }
 
@@ -82,69 +75,31 @@ namespace MarkdownMenuViewer.Server.Services
             }
 
             var fileSystemObjects = new List<FileSystemObject>();
+            var directoryInfo = new DirectoryInfo(path);
+            var fileSystemInfos = directoryInfo.EnumerateFileSystemInfos();
 
-            if (File.Exists(path))
+            foreach (var info in fileSystemInfos)
             {
-                var content = await File.ReadAllTextAsync(path);
-                fileSystemObjects.Add(new FileSystemObject
+                bool isDirectory = info is DirectoryInfo;
+                string fileType = isDirectory ? "directory" : info.Extension.ToLowerInvariant();
+
+                var fileSystemObject = new FileSystemObject
                 {
-                    IsFile = true,
-                    File = new MarkdownFile
+                    Type = fileType, 
+                    File = !isDirectory ? new MarkdownFile
                     {
-                        Name = Path.GetFileName(path),
-                        Path = path,
-                        Content = content
-                    },
-                    Directory = null
-                });
-            }
-            else if (Directory.Exists(path))
-            {
-                var directoryInfo = new DirectoryInfo(path);
-                var fileSystemInfos = directoryInfo.EnumerateFileSystemInfos();
-
-                foreach (var info in fileSystemInfos)
-                {
-                    bool isDirectory = info is DirectoryInfo;
-
-                    if (!isDirectory)
+                        Name = info.Name,
+                        Path = info.FullName,
+                        Content = (fileType == ".txt" || fileType == ".md") ? await File.ReadAllTextAsync(info.FullName) : null
+                    } : null,
+                    Directory = isDirectory ? new DirectoryItem
                     {
-                        //a file read its content
-                        var content = await File.ReadAllTextAsync(info.FullName);
-                        fileSystemObjects.Add(new FileSystemObject
-                        {
-                            IsFile = true,
-                            File = new MarkdownFile
-                            {
-                                Name = info.Name,
-                                Path = info.FullName,
-                                Content = content
-                            },
-                            Directory = null
-                        });
-                    }
-                    else
-                    {
-                        //a directory add a FileSystemObject
-                        fileSystemObjects.Add(new FileSystemObject
-                        {
-                            IsFile = false,
-                            Directory = new DirectoryItem
-                            {
-                                Name = info.Name,
-                                Path = info.FullName,
-                                IsDirectory = isDirectory,
-                                ParentDir = directoryInfo.Parent?.FullName,
-                                Children = new List<DirectoryItem>() // Initialize, but don't populate children here
-                            },
-                            File = null
-                        });
-                    }
-                }
-            }
-            else
-            {
-                throw new FileNotFoundException("The specified path does not exist.");
+                        Name = info.Name,
+                        Path = info.FullName,
+                        ParentDir = directoryInfo.Parent?.FullName,
+                     } : null
+                };
+                fileSystemObjects.Add(fileSystemObject);
             }
             return fileSystemObjects;
         }
