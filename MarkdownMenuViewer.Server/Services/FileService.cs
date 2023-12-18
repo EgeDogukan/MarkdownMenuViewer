@@ -74,17 +74,19 @@ namespace MarkdownMenuViewer.Server.Services
             return await Task.FromResult(markdownFile);
         }
 
-        public async Task<FileSystemObject> GetFileSystemObjectAsync(string path)
+        public async Task<IEnumerable<FileSystemObject>> GetFileSystemObjectAsync(string path)
         {
-            if (string.IsNullOrEmpty(path) == true)
+            if (string.IsNullOrEmpty(path))
             {
-                throw new ArgumentNullException(path, "path is null");
+                throw new ArgumentNullException(nameof(path), "path cannot be null or empty.");
             }
 
-            if(File.Exists(path) == true)
+            var fileSystemObjects = new List<FileSystemObject>();
+
+            if (File.Exists(path))
             {
                 var content = await File.ReadAllTextAsync(path);
-                return new FileSystemObject
+                fileSystemObjects.Add(new FileSystemObject
                 {
                     IsFile = true,
                     File = new MarkdownFile
@@ -92,37 +94,59 @@ namespace MarkdownMenuViewer.Server.Services
                         Name = Path.GetFileName(path),
                         Path = path,
                         Content = content
-                    }
-                };
+                    },
+                    Directory = null
+                });
             }
             else if (Directory.Exists(path))
             {
-
-                var directoryInfo = new DirectoryInfo(path); //directoryinfo class has the abilites to get parent, enumerate content etc.
+                var directoryInfo = new DirectoryInfo(path);
                 var fileSystemInfos = directoryInfo.EnumerateFileSystemInfos();
 
                 foreach (var info in fileSystemInfos)
                 {
-                    return new FileSystemObject
+                    bool isDirectory = info is DirectoryInfo;
+
+                    if (!isDirectory)
                     {
-                        IsFile = false,
-                        Directory = new DirectoryItem
+                        //a file read its content
+                        var content = await File.ReadAllTextAsync(info.FullName);
+                        fileSystemObjects.Add(new FileSystemObject
                         {
-                            Name = info.Name,
-                            Path = info.FullName,
-                            IsDirectory = (info.Attributes & FileAttributes.Directory) == FileAttributes.Directory,
-                            ParentDir = directoryInfo.Parent?.FullName,
-                            Children = new List<DirectoryItem>()  //initialize to null by default
-                        }
-                    };
+                            IsFile = true,
+                            File = new MarkdownFile
+                            {
+                                Name = info.Name,
+                                Path = info.FullName,
+                                Content = content
+                            },
+                            Directory = null
+                        });
+                    }
+                    else
+                    {
+                        //a directory add a FileSystemObject
+                        fileSystemObjects.Add(new FileSystemObject
+                        {
+                            IsFile = false,
+                            Directory = new DirectoryItem
+                            {
+                                Name = info.Name,
+                                Path = info.FullName,
+                                IsDirectory = isDirectory,
+                                ParentDir = directoryInfo.Parent?.FullName,
+                                Children = new List<DirectoryItem>() // Initialize, but don't populate children here
+                            },
+                            File = null
+                        });
+                    }
                 }
             }
             else
             {
-                throw new ArgumentException(path, "Can't locate the object");
-                return null;
+                throw new FileNotFoundException("The specified path does not exist.");
             }
-            return null;
+            return fileSystemObjects;
         }
     }
 }
