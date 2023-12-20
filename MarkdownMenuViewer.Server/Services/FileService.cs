@@ -1,5 +1,6 @@
 ﻿using MarkdownMenuViewer.Server.Models;
 using System.IO;
+using Markdig;
 
 namespace MarkdownMenuViewer.Server.Services
 {
@@ -54,12 +55,13 @@ namespace MarkdownMenuViewer.Server.Services
             } 
 
             var content = await File.ReadAllTextAsync(path);
+            var HTMLContent = Markdown.ToHtml(content);
 
             var markdownFile = new MarkdownFile
             {
                 Name = Path.GetFileName(path),
                 Path = path,
-                Content = content
+                Content = HTMLContent
             };
             
             return await Task.FromResult(markdownFile);
@@ -83,12 +85,12 @@ namespace MarkdownMenuViewer.Server.Services
 
                 var fileSystemObject = new FileSystemObject
                 {
-                    Type = fileType, 
+                    Type = fileType,
                     File = !isDirectory ? new MarkdownFile
                     {
                         Name = info.Name,
                         Path = info.FullName,
-                        Content = (fileType == ".txt" || fileType == ".md") ? await File.ReadAllTextAsync(info.FullName) : "not supported file type:" + fileType
+                        Content = (fileType == ".txt" || fileType == ".md") ? Markdown.ToHtml(await File.ReadAllTextAsync(info.FullName)) : "not supported file type:" + fileType
                     } : null,
                     Directory = isDirectory ? new DirectoryItem
                     {
