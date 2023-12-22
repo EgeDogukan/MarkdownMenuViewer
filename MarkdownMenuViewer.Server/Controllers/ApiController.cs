@@ -35,7 +35,7 @@ namespace MarkdownMenuViewer.Server.Controllers
         {
             try
             {
-                var file = await _fileService.GetMarkdownFileAsync(path);
+                var file = await _fileService.GetMarkdownFileContentAsync(path);
                 return Ok(file);
             }
             catch (FileNotFoundException ex)

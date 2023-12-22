@@ -35,19 +35,19 @@ namespace MarkdownMenuViewer.Server.Services
                     Name = info.Name,
                     Path = info.FullName,
                     ParentDir = null,
+                    Type = _findType(info)
                 };
 
                 if(directoryInfo.Parent != null && directoryInfo.Parent.Exists == true)   //checking whether the parent exists and if parent is null it means it is root
                 {
                     directoryItem.ParentDir = directoryInfo.Parent.FullName;
                 }
-
                 return directoryItem;
             });
             return await Task.FromResult(directoryItems);
         }
 
-        public async Task<MarkdownFile> GetMarkdownFileAsync(string path)
+        public async Task<MarkdownFile> GetMarkdownFileContentAsync(string path)
         {
 
             if(File.Exists(path) == false)
@@ -65,11 +65,9 @@ namespace MarkdownMenuViewer.Server.Services
 
             var markdownFile = new MarkdownFile
             {
-                Name = Path.GetFileName(path),
-                Path = path,
-                Content = HTMLContent
+                Content = HTMLContent,
+                FileType = _findType(new FileInfo(path))
             };
-            
             return await Task.FromResult(markdownFile);
         }
 
@@ -91,11 +89,9 @@ namespace MarkdownMenuViewer.Server.Services
 
                 var fileSystemObject = new FileSystemObject
                 {
-                    Type = fileType,
                     File = !isDirectory ? new MarkdownFile
                     {
-                        Name = info.Name,
-                        Path = info.FullName,
+                        FileType = fileType,
                         Content = (fileType == ".txt" || fileType == ".md") ? Markdown.ToHtml(await File.ReadAllTextAsync(info.FullName)) : "not supported file type:" + fileType
                     } : null,
                     Directory = isDirectory ? new DirectoryItem
@@ -103,11 +99,12 @@ namespace MarkdownMenuViewer.Server.Services
                         Name = info.Name,
                         Path = info.FullName,
                         ParentDir = directoryInfo.Parent?.FullName,
+                        Type = fileType
                      } : null
                 };
                 fileSystemObjects.Add(fileSystemObject);
             }
-            return fileSystemObjects;
+            return await Task.FromResult(fileSystemObjects);
         }
     }
 }
