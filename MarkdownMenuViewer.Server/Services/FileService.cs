@@ -6,6 +6,12 @@ namespace MarkdownMenuViewer.Server.Services
 {
     public class FileService : IFileService
     {
+        private string _findType(FileSystemInfo info)
+        {
+            string type = info is DirectoryInfo ? "directory" : info.Extension.ToLowerInvariant();
+            return type;
+        }
+
         public async Task<IEnumerable<DirectoryItem>> GetDirectoryContentsAsync(string path)
         {
             //check whether the directory in path variable exists
@@ -81,7 +87,7 @@ namespace MarkdownMenuViewer.Server.Services
             foreach (var info in fileSystemInfos)
             {
                 bool isDirectory = info is DirectoryInfo;
-                string fileType = isDirectory ? "directory" : info.Extension.ToLowerInvariant();
+                string fileType = _findType(info);
 
                 var fileSystemObject = new FileSystemObject
                 {
