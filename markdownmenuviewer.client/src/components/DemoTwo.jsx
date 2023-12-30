@@ -3,7 +3,7 @@ import { useState } from "react";
 import "../CSS/style.css";
 
 export default function Explore() {
-const [selectedFile, setSelectedFile] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
 
   // Dosyaya tıklandığında bu fonksiyonu çağır ve seçilen dosyayı güncelle
   const handleFileClick = (fileName) => {
@@ -48,20 +48,20 @@ const [selectedFile, setSelectedFile] = useState(null);
 
         <div id="content">
 
-        <div id="md-content-one">
-          
-        <h2><i className="bi bi-filetype-md"></i> MarkdownMenuViewer</h2>
+          <div id="md-content-one">
 
-          
+            <h2><i className="bi bi-filetype-md"></i> MarkdownMenuViewer</h2>
 
-        </div>
 
-          
+
+          </div>
+
+
           <div id="md-content-two">
             {/* Seçilen dosya varsa, bu bölümde göster */}
             {selectedFile && (
               <h5>{`"${selectedFile}" dosyası içeriği `}</h5>
-              
+
             )}
           </div>
 
