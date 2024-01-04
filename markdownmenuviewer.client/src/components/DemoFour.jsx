@@ -1,11 +1,31 @@
 /* eslint-disable react/prop-types */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "../CSS/style.css";
 
 export default function Explore() {
   const [selectedFile, setSelectedFile] = useState(null);
+  const [files, setFiles] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Dosyaya tıklandığında bu fonksiyonu çağır ve seçilen dosyayı güncelle
+  useEffect(() => {
+    fetch("https://658e9ba72871a9866e7973f5.mockapi.io/markdown/v1/folder")
+      .then((response) => response.json())
+      .then((data) => {
+        // Parse işlemi
+        const parsedData = JSON.parse(JSON.stringify(data));
+
+        // Parse edilmiş veriyi files state'ine ata
+        setFiles(parsedData[0].files);
+
+        // Debug amaçlı log
+        console.log("Parse edilmiş veri:", parsedData);
+        //console.log("aa",files);
+      })
+      .catch((error) => console.error("API'den veri çekme hatası:", error))
+      .finally(() => setIsLoading(false));
+  }, []);
+
+  
   const handleFileClick = (fileName) => {
     setSelectedFile(fileName);
   };
@@ -13,169 +33,59 @@ export default function Explore() {
   return (
     <>
       <div className="container-m m-0" id="main-container">
-
         <div id="file-container">
-
           <div id="filess" className="d-flex justify-content  ">
-
-            <a href=""><i id="arrow" className="bi bi-arrow-left-circle"></i></a>
+            <a href="">
+              <i id="arrow" className="bi bi-arrow-left-circle"></i>
+            </a>
             <h1 id="files-heading">Files</h1>
-
           </div>
 
           <div>
             <div id="input" className="input-group">
-
-              <div id="placeholder" className="form-outline d-flex justify-content" data-mdb-input-init>
-
-                <input id="search-input" type="search" placeholder="Search your document" className="form-control" />
-
+              <div
+                id="placeholder"
+                className="form-outline d-flex justify-content"
+                data-mdb-input-init
+              >
+                <input
+                  id="search-input"
+                  type="search"
+                  placeholder="Search your document"
+                  className="form-control"
+                />
                 <button id="search-button" type="button" className="btn btn-primary">
                   <i className="bi bi-search"></i>
                 </button>
-
-
               </div>
-
-
             </div>
           </div>
 
-          <FileExplorer files={Files} onFileClick={handleFileClick} />
+          {isLoading ? (
+            <p>Loading...</p>
+          ) : (
+            <FileExplorer files={files} onFileClick={handleFileClick} />
+          )}
         </div>
 
-
-
         <div id="content">
-
           <div id="md-content-one">
-
-            <h2><i className="bi bi-filetype-md"></i> MarkdownMenuViewer</h2>
-
-
-
+            <h2>
+              <i className="bi bi-filetype-md"></i> MarkdownMenuViewer
+            </h2>
           </div>
-
 
           <div id="md-content-two">
             {/* Seçilen dosya varsa, bu bölümde göster */}
             {selectedFile && (
               <h5>{`"${selectedFile}" dosyası içeriği `}</h5>
-
             )}
           </div>
-
         </div>
       </div>
     </>
   );
 }
-
-let Files = {
-
-
-  type: "folder",
-  name: "Ana Dizin",
-  data: [
-
-    {
-      type: "folder",
-      name: "MarkdownMenuViewer.Server",
-      data: [
-        {
-          type: "folder",
-          name: "src",
-          data: [
-            {
-              type: "file",
-              name: "index.js"
-            }
-          ]
-        },
-        {
-          type: "folder",
-          name: "public",
-          data: [
-            {
-              type: "file",
-              name: "index.ts"
-            }
-          ]
-        },
-        {
-          type: "file",
-          name: "index.html"
-        },
-        {
-          type: "folder",
-          name: "data",
-          data: [
-            {
-              type: "folder",
-              name: "images",
-              data: [
-                {
-                  type: "file",
-                  name: "image.jpg"
-                },
-                {
-                  type: "file",
-                  name: "image2.jpg"
-                },
-                {
-                  type: "file",
-                  name: "image3.jpg"
-                }
-              ]
-            },
-            {
-              type: "file",
-              name: "logo.svg"
-            }
-          ]
-        },
-        {
-          type: "file",
-          name: "style.css"
-        }
-      ]
-    },
-    {
-      type: "folder",
-      name: "Markdownmenuviewer.client",
-      data: [
-        {
-          type: "file",
-          name: "typscript-1.ts"
-        },
-        {
-          type: "file",
-          name: "typscript-2.ts"
-        },
-        {
-          type: "file",
-          name: "typscrip3.ts"
-        }
-      ]
-    },
-
-    {
-      type: "file",
-      name: ".gitattributes"
-    },
-    {
-      type: "file",
-      name: ".gitignore"
-    },
-    {
-      type: "file",
-      name: "MarkdownMenuViewer.sln"
-    }
-  ]
-
-
-
-};
 
 function FileExplorer({ files, onFileClick }) {
   const [expanded, setExpanded] = useState(false);
@@ -190,7 +100,7 @@ function FileExplorer({ files, onFileClick }) {
     return (
       <div id="con" key={files.name}>
         <span id="spann" onClick={handleToggle}>
-          <i className={toggleIcon}></i>📂&nbsp;{files.name}
+          <i className={toggleIcon}></i><i className="bi bi-folder-fill"></i>&nbsp;{files.name}
         </span>
         <div className="expanded"
           style={{ display: expanded ? "block" : "none" }}
