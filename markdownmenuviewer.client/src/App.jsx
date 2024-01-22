@@ -1,5 +1,5 @@
 
-import Explore from "./components/DemoFive"
+import Explore from "./components/DemoSix"
 
 
 export default function App() {

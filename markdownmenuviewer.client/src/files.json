@@ -1,103 +1,118 @@
-{
-    "Files": {
+[
+  {
+    "files": {
       "type": "folder",
       "name": "Ana Dizin",
+      "content": "null",
       "data": [
         {
           "type": "folder",
           "name": "MarkdownMenuViewer.Server",
+          "content": "null",
           "data": [
             {
               "type": "folder",
               "name": "src",
+              "content": "null",
               "data": [
                 {
                   "type": "file",
-                  "name": "index.js"
+                  "name": "index.js",
+                  "content": "<p>Paragraphs are separated by a blank line.</p>"
                 }
               ]
             },
             {
               "type": "folder",
               "name": "public",
+              "content": "null",
               "data": [
                 {
                   "type": "file",
-                  "name": "index.ts"
+                  "name": "index.ts",
+                  "content": "<h1>An h2 header</h1>"
                 }
               ]
             },
             {
               "type": "file",
-              "name": "index.html"
+              "name": "index.html",
+              "content": "<h1>An h3 header</h1>"
             },
             {
               "type": "folder",
               "name": "data",
+              "content": "null",
               "data": [
                 {
                   "type": "folder",
                   "name": "images",
+                  "content": "null",
                   "data": [
                     {
                       "type": "file",
-                      "name": "image.jpg"
+                      "name": "image.jpg",
+                      "content": "<h1>An h4 header</h1>"
                     },
                     {
                       "type": "file",
-                      "name": "image2.jpg"
-                  
-                      
+                      "name": "image2.jpg",
+                      "content": "<h1>An h5 header</h1>"
                     },
                     {
                       "type": "file",
-                      "name": "image3.jpg"
+                      "name": "image3.jpg",
+                      "content": "<h1>An h6 header</h1>"
                     }
                   ]
                 },
                 {
                   "type": "file",
-                  "name": "logo.svg"
+                  "name": "logo.svg",
+                  "content": "<h1>An h7 header</h1>"
                 }
               ]
             },
             {
               "type": "file",
-              "name": "style.css"
+              "name": "style.css",
+              "content": "<h1>An h8 header</h1>"
             }
           ]
         },
         {
           "type": "folder",
           "name": "Markdownmenuviewer.client",
+          "content": "null",
           "data": [
             {
               "type": "file",
-              "name": "typscript-1.ts"
+              "name": "typscript-1.ts",
+              "content": "<h1>An h9 header</h1>"
             },
             {
               "type": "file",
-              "name": "typscript-2.ts"
+              "name": "typscript-2.ts",
+              "content": "<h1>An h10 header</h1>"
             },
             {
               "type": "file",
-              "name": "typscrip3.ts"
+              "name": "typscrip3.ts",
+              "content": "<h1>An h11 header</h1>"
             }
           ]
         },
         {
           "type": "file",
-          "name": ".gitattributes"
+          "name": ".gitattributes",
+          "content": "<h1>An h1 header</h1><p>Paragraphs are separated by a blank line.</p><p>2nd paragraph. <em>Italic</em>,<strong>bold</strong>, and <code>monospace</code>. Itemized listslook like:</p><ul><li>this one</li><li>that one</li><li>the other one</li></ul>"
         },
         {
           "type": "file",
-          "name": ".gitignore"
-        },
-        {
-          "type": "file",
-          "name": "MarkdownMenuViewer.sln"
+          "name": ".gitignore",
+          "content":"<h1>An h13 header</h1>"
         }
       ]
     }
   }
-  
+]

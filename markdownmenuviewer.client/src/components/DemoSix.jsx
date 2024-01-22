@@ -3,9 +3,10 @@ import { useState, useEffect } from "react";
 import "../CSS/style.css";
 
 export default function Explore() {
-    const [selectedFile, setSelectedFile] = useState(null);
+
     const [files, setFiles] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [selectedFileContent, setSelectedFileContent] = useState("");
 
     useEffect(() => {
         fetch("https://658e9ba72871a9866e7973f5.mockapi.io/markdown/v1/folder")
@@ -14,30 +15,34 @@ export default function Explore() {
                 // Parse işlemi
                 const parsedData = JSON.parse(JSON.stringify(data));
 
-                // Parse edilmiş veriyi files state'ine ata
+                // Parse edilmiş veriyi state'e ata
                 setFiles(parsedData[0].files);
+                setSelectedFileContent(parsedData[0].files.data.content);
+
 
                 // Debug amaçlı log
-                console.log("Parse edilmiş veri:", parsedData);
-                //console.log("aa",files);
-                
+                //console.log("Parse edilmiş veri:", parsedData);
+                //console.log("veri:", parsedData[0].files.data[2].content);
+
             })
             .catch((error) => console.error("API'den veri çekme hatası:", error))
             .finally(() => setIsLoading(false));
     }, []);
-//  select box  konacak yukarı
+   
 
-    const handleFileClick = (fileName) => {
-        setSelectedFile(fileName);
+    const handleFileClick = (content) => {
+        setSelectedFileContent(content);
     };
 
+
     const [isLeftPaneOpen, setIsLeftPaneOpen] = useState(true);
+
 
     const toggleLeftPane = () => {
         setIsLeftPaneOpen(!isLeftPaneOpen);
     };
 
-    
+
 
 
     return (
@@ -46,13 +51,13 @@ export default function Explore() {
                 {isLeftPaneOpen && (
                     <div id="file-container">
                         <div id="filess" className="d-flex justify-content">
-                        <a  id="panell" href="#" onClick={toggleLeftPane}>
-                        {isLeftPaneOpen ? (
-                            <i id="arrow" className="bi bi-arrow-left-circle"></i>
-                        ) : (
-                            <i id="arrow" className="bi bi-arrow-right-circle"></i>
-                        )}
-                    </a>
+                            <a id="panell" href="#" onClick={toggleLeftPane}>
+                                {isLeftPaneOpen ? (
+                                    <i id="arrow" className="bi bi-arrow-left-circle"></i>
+                                ) : (
+                                    <i id="arrow" className="bi bi-arrow-right-circle"></i>
+                                )}
+                            </a>
                             <h1 id="files-heading"> Files</h1>
                         </div>
 
@@ -85,25 +90,25 @@ export default function Explore() {
                 )}
 
                 <div id="content">
-                    
+
                     <div id="md-content-one">
-                        
+
                         <h2>
-                        <a  id="panell" href="#" onClick={toggleLeftPane}>
-                        {isLeftPaneOpen ? (
-                            <i id="arrow" className="bi bi-arrow-left-circle"></i>
-                        ) : (
-                            <i id="arrow" className="bi bi-arrow-right-circle"></i>
-                        )}
-                    </a>
+                            <a id="panell" href="#" onClick={toggleLeftPane}>
+                                {isLeftPaneOpen ? (
+                                    <i id="arrow" className="bi bi-arrow-left-circle"></i>
+                                ) : (
+                                    <i id="arrow" className="bi bi-arrow-right-circle"></i>
+                                )}
+                            </a>
                             <i className="bi bi-filetype-md"></i> MarkdownMenuViewer
                         </h2>
                     </div>
 
                     <div id="md-content-two">
-                        {/* Seçilen dosya varsa, bu bölümde göster */}
-                        {selectedFile && (
-                            <h5>{`"${selectedFile}" dosyası içeriği: `}</h5>
+                        {/* Dosya içeriğini göster */}
+                        {selectedFileContent && (
+                            <div dangerouslySetInnerHTML={{ __html: selectedFileContent }} />
                         )}
                     </div>
                 </div>
@@ -125,7 +130,7 @@ function FileExplorer({ files, onFileClick }) {
         return (
             <div id="con" key={files.name}>
                 <span id="spann" onClick={handleToggle}>
-                    <i className={toggleIcon}></i><i className="bi bi-folder-fill"></i>&nbsp;{files.name}
+                    <i id="arrowdown" className={toggleIcon}></i><i id="folder" className="bi bi-folder-fill"></i>&nbsp;{files.name}
                 </span>
                 <div className="expanded"
                     style={{ display: expanded ? "block" : "none" }}
@@ -137,7 +142,7 @@ function FileExplorer({ files, onFileClick }) {
                                 <div
                                     id="expanded-content"
                                     key={file.name}
-                                    onClick={() => onFileClick(file.name)}
+                                    onClick={() => onFileClick(file.content)}
                                 >
                                     &nbsp;&nbsp;&nbsp;&nbsp;<i className="bi bi-file-earmark"></i>&nbsp;{file.name}
                                 </div>
