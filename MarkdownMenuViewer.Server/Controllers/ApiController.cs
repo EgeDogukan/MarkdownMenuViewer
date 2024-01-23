@@ -65,5 +65,19 @@ namespace MarkdownMenuViewer.Server.Controllers
                 return StatusCode(500, "An error occurred while processing your request.");
             }
         }
+
+        [HttpGet("GetAll")]
+        public async Task<IActionResult> GetItemsAllRecursive(string path)
+        {
+            try
+            {
+                var allItems = await _fileService.GetAllRecursivesAsync(path);
+                return Ok(allItems);
+            }
+            catch (FileNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
     }
 }

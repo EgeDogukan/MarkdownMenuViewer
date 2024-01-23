@@ -106,5 +106,53 @@ namespace MarkdownMenuViewer.Server.Services
             }
             return await Task.FromResult(fileSystemObjects);
         }
+
+        public async Task<IEnumerable<GeneralItemsAllRecursive>> GetAllRecursivesAsync(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+            {
+                throw new ArgumentNullException(nameof(path), "Path cannot be null or empty.");
+            }
+
+            var items = new List<GeneralItemsAllRecursive>();
+            await ProcessDirectoryAsync(path, items);
+            return items;
+        }
+
+        private async Task ProcessDirectoryAsync(string path, List<GeneralItemsAllRecursive> items)
+        {
+            var info = new FileInfo(path);
+            if (info.Attributes.HasFlag(FileAttributes.Directory))
+            {
+                var dir = new DirectoryInfo(path);
+                var directoryItem = new GeneralItemsAllRecursive
+                {
+                    Type = "folder",
+                    Name = dir.Name,
+                    Content = null,
+                    Data = new List<GeneralItemsAllRecursive>()
+                };
+
+                foreach (var child in dir.EnumerateFileSystemInfos())
+                {
+                    await ProcessDirectoryAsync(child.FullName, directoryItem.Data);
+                }
+
+                items.Add(directoryItem);
+            }
+            else
+            {
+                var fileItem = new GeneralItemsAllRecursive
+                {
+                    Type = "file",
+                    Name = info.Name,
+                    Content = (info.Extension.ToLowerInvariant() == ".md" || info.Extension.ToLowerInvariant() == ".txt") ? Markdown.ToHtml(await File.ReadAllTextAsync(path)) : "not supported file type: " + info.Extension
+                };
+
+                items.Add(fileItem);
+            }
+        }
     }
+
 }
+
