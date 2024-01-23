@@ -146,7 +146,7 @@ namespace MarkdownMenuViewer.Server.Services
                 {
                     Type = "file",
                     Name = info.Name,
-                    Content = (info.Extension.ToLowerInvariant() == ".md" || info.Extension.ToLowerInvariant() == ".txt") ? Markdown.ToHtml(await File.ReadAllTextAsync(path)) : "not supported file type: " + info.Extension
+                    Content = (info.Extension.ToLowerInvariant() == ".md" || /*info.Extension.ToLowerInvariant() == ".txt" UNCOMMENT THIS TO ENABLE TXT READING FEATURE*/ false) ? Markdown.ToHtml(await File.ReadAllTextAsync(path)) : "not supported file type: " + info.Extension
                 };
 
                 items.Add(fileItem);
