@@ -112,13 +112,14 @@ code {
 
 #files-heading {
   margin-top: 14px;
-  margin-left: 10px;
+  margin-left: 2px;
   font-size: large;
 
 }
 
 #arrowdown {
   margin-right: 5px;
+  
 }
 
 #arrow {
@@ -127,6 +128,7 @@ code {
   border-radius: 10%;
   color: black;
   cursor: pointer;
+  margin-top: 8px;
 
 }
 
