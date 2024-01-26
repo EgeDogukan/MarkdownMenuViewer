@@ -11,7 +11,7 @@ export default function Explore() {
 
 
   useEffect(() => {
-    fetch("https://658e9ba72871a9866e7973f5.mockapi.io/markdown/v1/folder")
+    fetch("http://localhost:5261/api/FileSystem/GetAll?path=C%3A%5CUsers%5CBATUHAN%5CDesktop%5Ctest%20verisi")
       .then((response) => response.json())
       .then((data) => {
         // Parse işlemi
@@ -123,7 +123,7 @@ export default function Explore() {
           <div id="md-content-two">
             {/* Dosya içeriğini göster */}
             {selectedFileContent && (
-              <div dangerouslySetInnerHTML={{ __html: selectedFileContent }} />
+              <div id="md-content-two-inside" dangerouslySetInnerHTML={{ __html: selectedFileContent }} />
             )}
           </div>
         </div>
