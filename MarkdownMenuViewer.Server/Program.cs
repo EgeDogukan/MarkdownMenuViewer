@@ -17,10 +17,21 @@ namespace MarkdownMenuViewer.Server
             builder.Services.AddSwaggerGen();
             builder.Services.AddScoped<IFileService, FileService>();
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder.WithOrigins("https://localhost:5174") // Allow only this origin can be multiple
+                           .AllowAnyHeader()
+                           .AllowAnyMethod();
+                });
+            });
+
             var app = builder.Build();
 
             app.UseDefaultFiles();
             app.UseStaticFiles();
+            app.UseCors();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

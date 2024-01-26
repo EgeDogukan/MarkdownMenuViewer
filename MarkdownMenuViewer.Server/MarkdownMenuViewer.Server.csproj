@@ -17,6 +17,7 @@
     <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="8.*-*">
     </PackageReference>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Cors" Version="2.2.0" />
   </ItemGroup>
 
   <ItemGroup>
