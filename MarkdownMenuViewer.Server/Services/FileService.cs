@@ -115,8 +115,11 @@ namespace MarkdownMenuViewer.Server.Services
             }
 
             var items = new List<GeneralItemsAllRecursive>();
+            var sorted_items = new List<GeneralItemsAllRecursive>();
+
             await ProcessDirectoryAsync(path, items);
-            return items;
+            sorted_items = Sort(items);
+            return sorted_items;
         }
 
         private async Task ProcessDirectoryAsync(string path, List<GeneralItemsAllRecursive> items)
@@ -166,7 +169,32 @@ namespace MarkdownMenuViewer.Server.Services
             }
             return "not supported file type: " + info.Extension;
         }
-    }
 
+        private List<GeneralItemsAllRecursive> Sort(List<GeneralItemsAllRecursive> items)
+        {
+            items.Sort((x, y) =>
+            {
+                if (x.Type == y.Type) // If both are files or both are folders, sort alphabetically
+                {
+                    return string.Compare(x.Name, y.Name, StringComparison.OrdinalIgnoreCase);
+                }
+                else if (x.Type == "folder" && y.Type == "file") // If x is a folder and y is a file, x comes first
+                {
+                    return -1; // x comes first
+                }
+                else // If x is a file and y is a folder, y comes first
+                {
+                    return 1; // y comes first
+                }
+            });
+
+            // Sort child Data recursively
+            foreach (var item in items.Where(item => item.Type == "folder" && item.Data != null))
+            {
+                item.Data = Sort(item.Data);
+            }
+            return items;
+        }
+    }
 }
 
