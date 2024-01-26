@@ -146,11 +146,25 @@ namespace MarkdownMenuViewer.Server.Services
                 {
                     Type = "file",
                     Name = info.Name,
-                    Content = (info.Extension.ToLowerInvariant() == ".md" || /*info.Extension.ToLowerInvariant() == ".txt" UNCOMMENT THIS TO ENABLE TXT READING FEATURE*/ false) ? Markdown.ToHtml(await File.ReadAllTextAsync(path)) : "not supported file type: " + info.Extension
+                    //Content = (info.Extension.ToLowerInvariant() == ".md" || /*info.Extension.ToLowerInvariant() == ".txt" UNCOMMENT THIS TO ENABLE TXT READING FEATURE*/ false) ? Markdown.ToHtml(await File.ReadAllTextAsync(path)) : "not supported file type: " + info.Extension
+                    Content = GetContent(info, path)
                 };
 
                 items.Add(fileItem);
             }
+        }
+
+        private string GetContent(FileSystemInfo info, string path)
+        {
+            if(info.Extension.ToLowerInvariant() == ".md")
+            {
+                return Markdown.ToHtml(File.ReadAllText(path));
+            }
+            else if(info.Extension.ToLowerInvariant() == ".txt")
+            {
+                return System.Net.WebUtility.HtmlEncode(File.ReadAllText(path));
+            }
+            return "not supported file type: " + info.Extension;
         }
     }
 
