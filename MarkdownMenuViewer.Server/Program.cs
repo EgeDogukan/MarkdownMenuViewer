@@ -17,11 +17,21 @@ namespace MarkdownMenuViewer.Server
             builder.Services.AddSwaggerGen();
             builder.Services.AddScoped<IFileService, FileService>();
 
+            /*builder.Services.AddCors(options =>
+            {
+                options.AddDefaultPolicy(builder =>
+                {
+                    builder.WithOrigins("https://localhost:*") // Serverda hostlandigi zaman burasi degistirilecek, potansiyel guvenlik acigi
+                           .AllowAnyHeader()
+                           .AllowAnyMethod();
+                });
+            });*/
+
             builder.Services.AddCors(options =>
             {
                 options.AddDefaultPolicy(builder =>
                 {
-                    builder.WithOrigins("https://localhost:5174") // Allow only this origin can be multiple
+                    builder.SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost")
                            .AllowAnyHeader()
                            .AllowAnyMethod();
                 });
