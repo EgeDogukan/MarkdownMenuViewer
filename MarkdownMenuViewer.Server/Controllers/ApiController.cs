@@ -66,12 +66,27 @@ namespace MarkdownMenuViewer.Server.Controllers
             }
         }
 
-        [HttpGet("GetAll")]
+        [HttpGet("GetAllPath")]
         public async Task<IActionResult> GetItemsAllRecursive(string path)
         {
             try
             {
                 var allItems = await _fileService.GetAllRecursivesAsync(path);
+                return Ok(allItems);
+            }
+            catch (FileNotFoundException ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        [HttpGet("GetAllString")]
+        public async Task<IActionResult> GetItemsAllStringRecursive(string name)
+        {
+            //TODO: add a function which takes a name then gives the saved path in the server.
+            try
+            {
+                var allItems = await _fileService.GetAllRecursivesAsync(name);
                 return Ok(allItems);
             }
             catch (FileNotFoundException ex)
